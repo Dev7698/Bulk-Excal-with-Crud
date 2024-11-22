@@ -1,0 +1,393 @@
+﻿@model Employee
+
+@{
+    ViewData["title"] = "Home Page";
+}
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+ 
+<div class="container">
+    <br />
+    @* Error model *@ 
+    <div class="float-end"> 
+        <span class="alert alert-danger alert-dismissible fade hide" id="errorModal" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span> 
+            </button> 
+        </span> 
+        <span class="alert alert-success alert-dismissible fade hide" id="succesModel" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button> 
+        </span> 
+    </div>  
+
+    <div>
+        @* Button for add employee *@
+        <button id="addEmpBtn" class="btn btn-success btn-lg" type="button" aria-label="Add Employee">
+            <i class="fas fa-user-plus"></i> Add Employee
+        </button>
+        @* Button for upload employee data*@
+        <button id="uploadEmpData" class="btn btn-primary btn-lg" type="button" aria-label="Upload Employee Data">
+            <i class="fas fa-upload"></i> Upload Employee Data
+        </button>
+        @* Button for dowload employee excel file*@
+        <button id="downloadExcel" class="btn btn-secondary btn-lg" type="button" aria-label="Download Excel">
+            <i class="fas fa-file-excel"></i> Download Excel
+        </button>
+        <button id="downloadBtn">
+            <img src="/css/excallogo.png" />
+        </button>
+       
+
+    </div> 
+    <br /><br />
+
+    @* Table *@
+    <table id="EmployeeTable" class="table table-striped table-bordered" width="100%" cellspacing="0">
+        <thead class="text-center">
+            <tr>
+
+                <th>Action</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Gender</th>
+                <th>Department</th>
+                <th>Joining Date</th>
+                <th>Address</th>
+
+            </tr> 
+        </thead>
+        
+        <tbody id="table_data" class="text-center"> </tbody> 
+    </table> 
+    
+    @* Modal for add new employee data *@
+    <div class="modal fade" id="addEmpModel">
+        <div class="modal-dialog"> 
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add Employee</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div> 
+                <div class="modal-body"> 
+                    @* Form *@ 
+                    <form asp-controller="Employee" id="employeeForm" method="post" enctype="multipart/form-data">
+
+                        <div class="row mb-2">
+                            @* First Name *@ 
+                            <div class="col-6">
+                                <label asp-for="First_Name" for="fname"></label>
+                                <div>
+                                    <input type="text" asp-for="First_Name" id="fname" name="fname" class="form-control" required/>
+                                </div>
+                            </div> 
+                            @* Last Name *@
+                            <div class="col-6">
+                                <label asp-for="Last_Name"></label>
+                                <div>
+                                    <input type="text" asp-for="Last_Name" id="lname" class="form-control" required />
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="row mb-2">
+                            @* Email *@
+                            <div class="col-6">
+                                <label asp-for="Email"></label>
+                                <div>
+                                    <input type="email" asp-for="Email" id="email" class="form-control" required />
+                                </div> 
+                            </div>
+                            @* Phone Number *@
+                            <div class="col-6">
+                                <label asp-for="Phone_Number"></label>
+                                <div>
+                                    <input type="tel" asp-for="Phone_Number" id="phone" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @* Gender *@
+                            <div class="col-12">
+                                <label asp-for="Gender"></label>
+                                <b class="ms-3 me-3">:</b>
+                                <input type="radio" name="RadioField" asp-for="Gender" id="gender" value="Male" required />
+                                <label for="gender">Male</label>
+                                <input type="radio" name="RadioField" asp-for="Gender" id="gender" value="Female" required />
+                                <label for="gender">Female</label>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @* Department *@
+                            <div class="col-6">
+                                <label asp-for="Department"></label>
+                                <select id="department" asp-for="Department_Id" class="form-control" required>
+                                    <option value="">Select Department</option>
+                                    @foreach (var department in Enum.GetValues(typeof(DepartmentName)))
+                                    {
+                                        <option value="@((int)department)">@department</option>
+                                    }
+                                </select>
+                            </div>
+                            @* Joining Data *@
+                            <div class="col-6">
+                                <label asp-for="Joining_Date"></label>
+                                <div>
+                                    <input type="date" name="name" id="jdate" asp-for="Joining_Date" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                          
+                        <div class="row mb-2">
+                            @* Address *@
+                            <div class="col-12">
+                                <label asp-for="Address"></label>
+                                <div>
+                                    <textarea asp-for="Address" id="address" rows="3" class="form-control" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Profile Image *@
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <label asp-for="Profile_Image"></label>
+                                <div>
+                                    <input type="file" asp-for="Profile_Image" id="image" name="name" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bs-dismiss="modal" id="closeModel" class="btn btn-danger btn-lg" type="button" aria-label="Close">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button id="SaveEmployeeData" class="btn btn-primary btn-lg" type="button" aria-label="Save Employee Data">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Modal for edit employee data *@
+    <div class="modal fade" id="editEmpModel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Update Employee</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* Form *@
+                    <form id="edit_employeeForm" method="post" enctype="multipart/form-data">
+
+                        <input type="hidden" id="edit_employee_id" />
+
+                        <div class="row mb-2">
+                            @* First Name *@
+                            <div class="col-6">
+                                <label asp-for="First_Name"></label>
+                                <div>
+                                    <input type="text" asp-for="First_Name" id="edit_fname" class="form-control" />
+                                </div>
+                            </div>
+                            @* Last Name *@
+                            <div class="col-6">
+                                    <label asp-for="Last_Name"></label>
+                                <div>
+                                    <input type="text" asp-for="Last_Name" id="edit_lname" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @* Email *@
+                            <div class="col-6">
+                                <label asp-for="Email"></label>
+                                <div>
+                                    <input type="email" asp-for="Email" id="edit_email" class="form-control" />
+                                </div>
+                            </div>
+                            @* Phone Number *@
+                            <div class="col-6">
+                                <label asp-for="Phone_Number"></label>
+                                <div>
+                                    <input type="tel" asp-for="Phone_Number" id="edit_phone" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @* Gender *@
+                            <div class="col-12">
+                                <label asp-for="Gender"></label>
+                                <b class="ms-3 me-3">:</b>
+                                <input type="radio" name="RadioField" asp-for="Gender" id="edit_gender_male" value="Male" /> Male
+                                <input type="radio" name="RadioField" asp-for="Gender" id="edit_gender_female" value="Female" /> Female
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @* Department *@
+                            <div class="col-6">
+                                <label asp-for="Department"></label>
+                                <select id="edit_department" asp-for="Department_Id" class="form-control">
+                                    <option value="">Select Department</option>
+                                    @foreach (var department in Enum.GetValues(typeof(DepartmentName)))
+                                    {
+                                        <option value="@((int)department)">@department</option>
+                                    }
+                                </select>
+                            </div>
+                            @* Joining Data *@
+                            <div class="col-6">
+                                <label asp-for="Joining_Date"></label>
+                                <div>
+                                    <input type="date" name="name" id="edit_jdate" asp-for="Joining_Date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            @* Address *@
+                            <div class="col-12">
+                                <label asp-for="Address"></label>
+                                <div>
+                                    <textarea asp-for="Address" id="edit_address" rows="3" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bs-dismiss="modal" id="cancelModel" class="btn btn-secondary btn-lg" type="button" aria-label="Cancel">
+                        <i class="fas fa-ban"></i> Cancel
+                    </button>
+                    
+                    <button id="UpdateEmployeeData" class="btn btn-success btn-lg" type="button" aria-label="Upload Employee Data">
+                        <i class="fas fa-upload"></i> Upload 
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Model for upload data *@  
+    <div class="modal fade" id="UploadFile">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Upload Employee Data</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* Form *@
+                    <form id="Upload_Data" method="post" enctype="multipart/form-data">
+                        <div class="input-group mb-3">
+                            <input type="file"multiple class="form-control" id="SelectedFile" name="SelectedFile" required>
+                            <label class="input-group-text" for="SelectedFile">Import</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bs-dismiss="modal" id="closeModel" class="btn btn-danger btn-lg" type="button" aria-label="Close">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button id="UploadEmpData" class="btn btn-primary btn-lg" type="button" aria-label="Upload Employee Data">
+                        <i class="fas fa-upload"></i> Upload
+                    </button> 
+                </div>
+            </div>
+        </div>
+    </div>                 
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <style>
+        body {
+            position: relative;
+            height: 100vh; /* Ensure the body takes full height */
+        }
+
+        #downloadBtn {
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+            #downloadBtn img {
+                width: 50px; /* Adjust the size as needed */
+            }
+
+        #logo {
+            position: absolute;
+            top: 20px; /* Adjust vertical positioning */
+            right: 20px; /* Adjust horizontal positioning */
+        }
+    </style>
+</head> 
+<body> 
+    <div id="logo">
+         
+    </div> 
+
+    <script> 
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+            // Define the headers without dummy data
+            const data = [{}]; // Empty object for each row, no dummy data
+
+          
+            const worksheet = XLSX.utils.json_to_sheet(data, {
+                header: [
+                    'Employee_Id',
+                    'First_Name',
+                    'Last_Name',
+                    'Email',
+                    'Phone_Number',
+                    'Gender',
+                    'Department_Id',
+                    'Joining_Date',
+                    'Address',
+                    'Profile_Image'
+                ]
+            });
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Employees');
+
+            // Generate file name
+            const fileName = 'employees.xlsx';
+
+            // Export to Excel
+            XLSX.writeFile(workbook, fileName);
+        });
+    </script>
+</body>
+</html>
